@@ -13,6 +13,7 @@ type User struct {
 func CreateUser(data *User) int {
 	err := db.Create(&data).Error
 	if err != nil {
-
+		return 1
 	}
+	return 1
 }
