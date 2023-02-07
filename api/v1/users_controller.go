@@ -33,10 +33,10 @@ func GetUsers(c *gin.Context) {
 	perPage, _ := strconv.Atoi(c.Query("per_page"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	if perPage == 0 {
-		perPage = -1
+		perPage = 1
 	}
 	if page == 0 {
-		page = -1
+		page = 20
 	}
 	data := model.GetUsers(perPage, page)
 	c.JSON(http.StatusOK, gin.H{
@@ -48,10 +48,28 @@ func GetUsers(c *gin.Context) {
 
 // EditUser 编辑用户
 func EditUser(c *gin.Context) {
-
+	u := &model.User{}
+	id, _ := strconv.Atoi(c.Param("id"))
+	_ = c.ShouldBindJSON(u)
+	code := model.CheckUser(u.Username)
+	if code == errmsg.SUCCESS {
+		model.EditUser(id, u)
+	}
+	if code == errmsg.ERROR_USERNAME_USED {
+		c.Abort()
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+	})
 }
 
 // DeleteUser 删除用户
 func DeleteUser(c *gin.Context) {
-
+	id, _ := strconv.Atoi(c.Param("id"))
+	code := model.DeleteUser(id)
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+	})
 }
