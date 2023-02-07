@@ -8,3 +8,11 @@ type User struct {
 	Password string `gorm:"type:varchar(20);not null" json:"password"`
 	Role     int    `gorm:"type:int;not null" json:"role"`
 }
+
+// 添加用户
+func CreateUser(data *User) int {
+	err := db.Create(&data).Error
+	if err != nil {
+
+	}
+}
