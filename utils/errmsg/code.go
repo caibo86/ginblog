@@ -6,6 +6,7 @@ const (
 	Success           Code = 0
 	ErrServer         Code = 1
 	ErrBadRequest     Code = 2
+	ErrUnauthorized   Code = 3
 	ErrDBSelect       Code = 101
 	ErrDBInsert       Code = 102
 	ErrDBUpdate       Code = 103
@@ -25,6 +26,7 @@ var codeMsg = map[Code]string{
 	Success:           "OK",
 	ErrServer:         "服务器错误",
 	ErrBadRequest:     "错误的请求",
+	ErrUnauthorized:   "未认证的请求",
 	ErrDBSelect:       "数据库查询错误",
 	ErrDBInsert:       "数据库插入错误",
 	ErrDBUpdate:       "数据库更新错误",

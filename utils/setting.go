@@ -14,6 +14,7 @@ var (
 	DbUser     string
 	DbPassword string
 	DbName     string
+	JwtKey     string
 )
 
 func init() {
@@ -37,4 +38,5 @@ func LoadData(file *ini.File) {
 	DbUser = file.Section("server").Key("DbUser").MustString("root")
 	DbPassword = file.Section("server").Key("DbPassword").MustString("")
 	DbName = file.Section("server").Key("DbName").MustString("ginblog")
+	JwtKey = file.Section("server").Key("JwtKey").MustString("dsad1s232v")
 }
