@@ -16,7 +16,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	code := model.CheckUser(data.Username)
-	if code == errmsg.Success {
+	if code == errmsg.OK {
 		code = model.CreateUser(&data)
 	}
 	RenderResult(c, code, data)
@@ -42,7 +42,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 	code := model.CheckUser(u.Username)
-	if code == errmsg.Success {
+	if code == errmsg.OK {
 		code = model.UpdateUser(id, u)
 	}
 	RenderResult(c, code, u)

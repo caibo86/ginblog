@@ -4,15 +4,17 @@ import (
 	v1 "github.com/caibo86/ginblog/api/v1"
 	"github.com/caibo86/ginblog/utils"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 func InitRouter() {
 	gin.SetMode(utils.AppMode)
 	r := gin.Default()
 	router := r.Group("api/v1")
+	router.Use(v1.JwtToken())
 	{
 		// 用户模块的路由接口
-		router.POST("users", v1.CreateUser)
+
 		router.GET("users", v1.IndexUser)
 		router.PUT("users/:id", v1.UpdateUser)
 		router.DELETE("users/:id", v1.DeleteUser)
@@ -28,6 +30,13 @@ func InitRouter() {
 		router.PUT("categories/:id", v1.UpdateCategory)
 		router.DELETE("categories/:id", v1.DeleteCategory)
 	}
-	r.Run(utils.HttpPort)
+	public := r.Group("api/v1")
+	{
+		public.POST("login", v1.Login)
+		public.POST("users", v1.CreateUser)
+	}
+	if err := r.Run(utils.HttpPort); err != nil {
+		log.Fatal(err)
+	}
 
 }

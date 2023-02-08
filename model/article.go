@@ -21,7 +21,7 @@ func CreateArticle(a *Article) error {
 	if err != nil {
 		return errmsg.ErrDBInsert
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // IndexArticle 查询文章
@@ -36,7 +36,7 @@ func IndexArticle(perPage, page int, categoryID int) ([]*Article, error) {
 	if err != nil {
 		return nil, errmsg.ErrDBSelect
 	}
-	return articles, errmsg.Success
+	return articles, errmsg.OK
 }
 
 // ShowArticle 查询单个文章
@@ -48,7 +48,7 @@ func ShowArticle(id int) (*Article, error) {
 	} else if err != nil {
 		return nil, errmsg.ErrDBSelect
 	}
-	return a, errmsg.Success
+	return a, errmsg.OK
 }
 
 // UpdateArticle 更新文章
@@ -57,7 +57,7 @@ func UpdateArticle(id int, a *Article) error {
 	if err := db.Model(a).Select("title", "category_id", "desc", "content", "img").Updates(a).Error; err != nil {
 		return errmsg.ErrDBUpdate
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // DeleteArticle 删除文章
@@ -65,5 +65,5 @@ func DeleteArticle(id int) error {
 	if err := db.Delete(&Article{}, "id = ?", id).Error; err != nil {
 		return errmsg.ErrDBDelete
 	}
-	return errmsg.Success
+	return errmsg.OK
 }

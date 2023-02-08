@@ -25,7 +25,7 @@ func CheckUser(name string) error {
 	if user.ID > 0 {
 		return errmsg.ErrDBNotUnique
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // CreateUser 添加用户
@@ -34,7 +34,7 @@ func CreateUser(u *User) error {
 	if err != nil {
 		return errmsg.ErrDBInsert
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // IndexUser 查询用户列表
@@ -44,7 +44,7 @@ func IndexUser(perPage, page int) ([]*User, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, errmsg.ErrDBSelect
 	}
-	return users, errmsg.Success
+	return users, errmsg.OK
 }
 
 // DeleteUser 删除用户
@@ -53,7 +53,7 @@ func DeleteUser(id int) error {
 	if err != nil {
 		return errmsg.ErrDBDelete
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // UpdateUser 更新用户
@@ -63,7 +63,7 @@ func UpdateUser(id int, u *User) error {
 	if err != nil {
 		return errmsg.ErrDBUpdate
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 func (u *User) BeforeSave(tx *gorm.DB) error {
@@ -81,4 +81,22 @@ func ScryptPw(password string) string {
 	}
 	ret := base64.StdEncoding.EncodeToString(hash)
 	return ret
+}
+
+// CheckLogin 登录验证
+func CheckLogin(username, password string) error {
+	user := &User{}
+	err := db.Where("username = ?", username).First(user).Error
+	if err == gorm.ErrRecordNotFound {
+		return errmsg.ErrRecordNotFound
+	} else if err != nil {
+		return errmsg.ErrDBSelect
+	}
+	if ScryptPw(password) != user.Password {
+		return errmsg.ErrPasswordWrong
+	}
+	if user.Role != 0 {
+		return errmsg.ErrNoPermission
+	}
+	return errmsg.OK
 }

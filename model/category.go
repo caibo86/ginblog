@@ -20,7 +20,7 @@ func CheckCategory(name string) error {
 	if c.ID > 0 {
 		return errmsg.ErrDBNotUnique
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // IndexCategory 查询分类
@@ -30,20 +30,20 @@ func IndexCategory(perPage, page int) ([]*Category, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, errmsg.ErrDBSelect
 	}
-	return categories, errmsg.Success
+	return categories, errmsg.OK
 }
 
 // CreateCategory 创建分类
 func CreateCategory(c *Category) error {
 	code := CheckCategory(c.Name)
-	if code != errmsg.Success {
+	if code != errmsg.OK {
 		return code
 	}
 	err := db.Create(c).Error
 	if err != nil {
 		return errmsg.ErrDBInsert
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // DeleteCategory 删除分类
@@ -52,13 +52,13 @@ func DeleteCategory(id int) error {
 	if err != nil {
 		return errmsg.ErrDBDelete
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // UpdateCategory 更新分类
 func UpdateCategory(id int, c *Category) error {
 	code := CheckCategory(c.Name)
-	if code != errmsg.Success {
+	if code != errmsg.OK {
 		return code
 	}
 	c.ID = id
@@ -66,7 +66,7 @@ func UpdateCategory(id int, c *Category) error {
 	if err != nil {
 		return errmsg.ErrDBUpdate
 	}
-	return errmsg.Success
+	return errmsg.OK
 }
 
 // OffsetByPage 根据页计算偏移
