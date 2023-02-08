@@ -3,7 +3,6 @@ package model
 import (
 	"github.com/caibo86/ginblog/utils/errmsg"
 	"gorm.io/gorm"
-	"log"
 )
 
 type Category struct {
@@ -25,13 +24,13 @@ func CheckCategory(name string) error {
 }
 
 // IndexCategory 查询分类
-func IndexCategory(perPage, page int) (error, []*Category) {
+func IndexCategory(perPage, page int) ([]*Category, error) {
 	var categories []*Category
 	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&categories).Error
-	if err != nil {
-		return errmsg.ErrDBSelect, nil
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, errmsg.ErrDBSelect
 	}
-	return errmsg.Success, categories
+	return categories, errmsg.Success
 }
 
 // CreateCategory 创建分类
@@ -42,7 +41,6 @@ func CreateCategory(c *Category) error {
 	}
 	err := db.Create(c).Error
 	if err != nil {
-		log.Println(err)
 		return errmsg.ErrDBInsert
 	}
 	return errmsg.Success
@@ -64,7 +62,6 @@ func UpdateCategory(id int, c *Category) error {
 		return code
 	}
 	c.ID = id
-	log.Println(c)
 	err := db.Model(c).Select("name").Updates(c).Error
 	if err != nil {
 		return errmsg.ErrDBUpdate

@@ -29,7 +29,7 @@ func CheckUser(name string) error {
 }
 
 // CreateUser 添加用户
-func CreateUser(u *User) errmsg.Code {
+func CreateUser(u *User) error {
 	err := db.Create(u).Error
 	if err != nil {
 		return errmsg.ErrDBInsert
@@ -38,16 +38,17 @@ func CreateUser(u *User) errmsg.Code {
 }
 
 // IndexUser 查询用户列表
-func IndexUser(perPage, page int, users []*User) errmsg.Code {
+func IndexUser(perPage, page int) ([]*User, error) {
+	var users []*User
 	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&users).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return errmsg.ErrDBSelect
+		return nil, errmsg.ErrDBSelect
 	}
-	return errmsg.Success
+	return users, errmsg.Success
 }
 
 // DeleteUser 删除用户
-func DeleteUser(id int) errmsg.Code {
+func DeleteUser(id int) error {
 	err := db.Where("id = ?", id).Delete(&User{}).Error
 	if err != nil {
 		return errmsg.ErrDBDelete
@@ -56,11 +57,9 @@ func DeleteUser(id int) errmsg.Code {
 }
 
 // UpdateUser 更新用户
-func UpdateUser(id int, u *User) errmsg.Code {
-	m := make(map[string]interface{})
-	m["username"] = u.Username
-	m["role"] = u.Role
-	err := db.Model(&User{}).Where("id = ?", id).Updates(m).Error
+func UpdateUser(id int, u *User) error {
+	u.ID = uint(id)
+	err := db.Model(u).Select("username", "role").Updates(u).Error
 	if err != nil {
 		return errmsg.ErrDBUpdate
 	}

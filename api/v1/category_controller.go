@@ -21,7 +21,7 @@ func CreateCategory(c *gin.Context) {
 // IndexCategory 查询分类
 func IndexCategory(c *gin.Context) {
 	perPage, page := GetPaginate(c)
-	code, categories := model.IndexCategory(perPage, page)
+	categories, code := model.IndexCategory(perPage, page)
 	RenderResult(c, code, categories)
 }
 

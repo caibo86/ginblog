@@ -12,11 +12,7 @@ import (
 func CreateUser(c *gin.Context) {
 	var data model.User
 	if err := c.ShouldBindJSON(&data); err != nil {
-		code := errmsg.ErrBadRequest
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  code,
-			"message": code.With(err),
-		})
+		RenderError(c, http.StatusBadRequest, err)
 		return
 	}
 	code := model.CheckUser(data.Username)
@@ -29,8 +25,7 @@ func CreateUser(c *gin.Context) {
 // IndexUser 查询用户列表
 func IndexUser(c *gin.Context) {
 	perPage, page := GetPaginate(c)
-	var users []*model.User
-	code := model.IndexUser(perPage, page, users)
+	users, code := model.IndexUser(perPage, page)
 	RenderResult(c, code, users)
 }
 
