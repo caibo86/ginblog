@@ -11,6 +11,7 @@ const (
 	ErrDBUpdate       Code = 103
 	ErrDBDelete       Code = 104
 	ErrDBNotUnique    Code = 105
+	ErrRecordNotFound Code = 106
 	ErrUsernameUsed   Code = 1001
 	ErrPasswordWrong  Code = 1002
 	ErrUserNotExist   Code = 1003
@@ -29,6 +30,7 @@ var codeMsg = map[Code]string{
 	ErrDBUpdate:       "数据库更新错误",
 	ErrDBDelete:       "数据库删除错误",
 	ErrDBNotUnique:    "唯一键冲突",
+	ErrRecordNotFound: "未找到记录",
 	ErrUsernameUsed:   "用户名已存在",
 	ErrPasswordWrong:  "密码错误",
 	ErrUserNotExist:   "用户名不存在",

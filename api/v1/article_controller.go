@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// CreateArticle 创建文章
 func CreateArticle(c *gin.Context) {
 	article := &model.Article{}
 	if err := c.ShouldBindJSON(article); err != nil {
@@ -17,12 +18,34 @@ func CreateArticle(c *gin.Context) {
 	RenderResult(c, code, article)
 }
 
+// IndexArticle 查询文章
 func IndexArticle(c *gin.Context) {
+	var categoryID int
+	var err error
 	perPage, page := GetPaginate(c)
-	articles, code := model.IndexArticle(perPage, page)
+	if c.Query("category_id") != "" {
+		categoryID, err = strconv.Atoi(c.Query("category_id"))
+		if err != nil {
+			RenderError(c, http.StatusBadRequest, err)
+			return
+		}
+	}
+	articles, code := model.IndexArticle(perPage, page, categoryID)
 	RenderResult(c, code, articles)
 }
 
+// ShowArticle 查询单个文章
+func ShowArticle(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		RenderError(c, http.StatusBadRequest, err)
+		return
+	}
+	article, code := model.ShowArticle(id)
+	RenderResult(c, code, article)
+}
+
+// UpdateArticle 更新文章
 func UpdateArticle(c *gin.Context) {
 	article := &model.Article{}
 	id, err := strconv.Atoi(c.Param("id"))
@@ -38,6 +61,7 @@ func UpdateArticle(c *gin.Context) {
 	RenderResult(c, code, article)
 }
 
+// DeleteArticle 删除文章
 func DeleteArticle(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

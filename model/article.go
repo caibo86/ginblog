@@ -25,9 +25,14 @@ func CreateArticle(a *Article) error {
 }
 
 // IndexArticle 查询文章
-func IndexArticle(perPage, page int) ([]*Article, error) {
+func IndexArticle(perPage, page int, categoryID int) ([]*Article, error) {
 	var articles []*Article
-	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&articles).Error
+	var err error
+	if categoryID > 0 {
+		err = db.Preload("Category").Limit(perPage).Offset(OffsetByPage(perPage, page)).Where("category_id = ?", categoryID).Find(&articles).Error
+	} else {
+		err = db.Preload("Category").Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&articles).Error
+	}
 	if err != nil {
 		return nil, errmsg.ErrDBSelect
 	}
@@ -36,14 +41,20 @@ func IndexArticle(perPage, page int) ([]*Article, error) {
 
 // ShowArticle 查询单个文章
 func ShowArticle(id int) (*Article, error) {
-	var a *Article
+	a := &Article{}
+	err := db.Preload("Category").Where("id = ?", id).First(a).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, errmsg.ErrRecordNotFound
+	} else if err != nil {
+		return nil, errmsg.ErrDBSelect
+	}
 	return a, errmsg.Success
 }
 
 // UpdateArticle 更新文章
 func UpdateArticle(id int, a *Article) error {
 	a.ID = uint(id)
-	if err := db.Model(a).Select("title", "cid", "desc", "content", "img").Updates(a).Error; err != nil {
+	if err := db.Model(a).Select("title", "category_id", "desc", "content", "img").Updates(a).Error; err != nil {
 		return errmsg.ErrDBUpdate
 	}
 	return errmsg.Success
