@@ -8,68 +8,58 @@ import (
 	"strconv"
 )
 
-// UserExist 查询用户是否存在
-func UserExist() {
-
-}
-
-// AddUser 添加用户
-func AddUser(c *gin.Context) {
+// CreateUser 添加用户
+func CreateUser(c *gin.Context) {
 	var data model.User
-	_ = c.ShouldBindJSON(&data)
+	if err := c.ShouldBindJSON(&data); err != nil {
+		code := errmsg.ErrBadRequest
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  code,
+			"message": code.With(err),
+		})
+		return
+	}
 	code := model.CheckUser(data.Username)
-	if code == errmsg.SUCCESS {
-		model.CreateUser(&data)
+	if code == errmsg.Success {
+		code = model.CreateUser(&data)
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"data":    data,
-		"message": errmsg.GetErrMsg(code),
-	})
+	RenderResult(c, code, data)
 }
 
-// GetUsers 查询用户列表
-func GetUsers(c *gin.Context) {
-	perPage, _ := strconv.Atoi(c.Query("per_page"))
-	page, _ := strconv.Atoi(c.Query("page"))
-	if perPage == 0 {
-		perPage = 1
-	}
-	if page == 0 {
-		page = 20
-	}
-	data := model.GetUsers(perPage, page)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  errmsg.SUCCESS,
-		"message": errmsg.GetErrMsg(errmsg.SUCCESS),
-		"data":    data,
-	})
+// IndexUser 查询用户列表
+func IndexUser(c *gin.Context) {
+	perPage, page := GetPaginate(c)
+	var users []*model.User
+	code := model.IndexUser(perPage, page, users)
+	RenderResult(c, code, users)
 }
 
-// EditUser 编辑用户
-func EditUser(c *gin.Context) {
+// UpdateUser 编辑用户
+func UpdateUser(c *gin.Context) {
 	u := &model.User{}
-	id, _ := strconv.Atoi(c.Param("id"))
-	_ = c.ShouldBindJSON(u)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		RenderError(c, http.StatusBadRequest, err)
+		return
+	}
+	if err = c.ShouldBindJSON(u); err != nil {
+		RenderError(c, http.StatusBadRequest, err)
+		return
+	}
 	code := model.CheckUser(u.Username)
-	if code == errmsg.SUCCESS {
-		model.EditUser(id, u)
+	if code == errmsg.Success {
+		code = model.UpdateUser(id, u)
 	}
-	if code == errmsg.ERROR_USERNAME_USED {
-		c.Abort()
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"message": errmsg.GetErrMsg(code),
-	})
+	RenderResult(c, code, u)
 }
 
 // DeleteUser 删除用户
 func DeleteUser(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		RenderError(c, http.StatusBadRequest, err)
+		return
+	}
 	code := model.DeleteUser(id)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"message": errmsg.GetErrMsg(code),
-	})
+	RenderResult(c, code, nil)
 }

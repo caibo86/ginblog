@@ -16,54 +16,55 @@ type User struct {
 }
 
 // CheckUser 查询用户是否存在
-func CheckUser(name string) int {
+func CheckUser(name string) error {
 	var user User
-	db.Select("id").Where("username = ?", name).First(&user)
-	if user.ID > 0 {
-		return errmsg.ERROR_USERNAME_USED
+	err := db.Select("id").Where("username = ?", name).First(&user).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return errmsg.ErrDBSelect
 	}
-	return errmsg.SUCCESS
+	if user.ID > 0 {
+		return errmsg.ErrDBNotUnique
+	}
+	return errmsg.Success
 }
 
 // CreateUser 添加用户
-func CreateUser(u *User) int {
-	//data.Password = ScryptPw(data.Password)
+func CreateUser(u *User) errmsg.Code {
 	err := db.Create(u).Error
 	if err != nil {
-		return errmsg.ERROR
+		return errmsg.ErrDBInsert
 	}
-	return errmsg.SUCCESS
+	return errmsg.Success
 }
 
-// GetUsers 查询用户列表
-func GetUsers(perPage, page int) []*User {
-	var users []*User
-	err := db.Limit(perPage).Offset((page - 1) * perPage).Find(&users).Error
+// IndexUser 查询用户列表
+func IndexUser(perPage, page int, users []*User) errmsg.Code {
+	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&users).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil
+		return errmsg.ErrDBSelect
 	}
-	return users
+	return errmsg.Success
 }
 
 // DeleteUser 删除用户
-func DeleteUser(id int) int {
+func DeleteUser(id int) errmsg.Code {
 	err := db.Where("id = ?", id).Delete(&User{}).Error
 	if err != nil {
-		return errmsg.ERROR
+		return errmsg.ErrDBDelete
 	}
-	return errmsg.SUCCESS
+	return errmsg.Success
 }
 
-// EditUser 更新用户
-func EditUser(id int, u *User) int {
+// UpdateUser 更新用户
+func UpdateUser(id int, u *User) errmsg.Code {
 	m := make(map[string]interface{})
 	m["username"] = u.Username
 	m["role"] = u.Role
 	err := db.Model(&User{}).Where("id = ?", id).Updates(m).Error
 	if err != nil {
-		return errmsg.ERROR
+		return errmsg.ErrDBUpdate
 	}
-	return errmsg.SUCCESS
+	return errmsg.Success
 }
 
 func (u *User) BeforeSave(tx *gorm.DB) error {
@@ -80,5 +81,5 @@ func ScryptPw(password string) string {
 		log.Fatal(err)
 	}
 	ret := base64.StdEncoding.EncodeToString(hash)
-	return string(ret)
+	return ret
 }
