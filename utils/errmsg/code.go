@@ -15,6 +15,7 @@ const (
 	ErrRecordNotFound  Code = 106
 	ErrJwtSign         Code = 201
 	ErrJwtTokenInvalid Code = 202
+	ErrQiniuUpload     Code = 301
 	ErrUsernameUsed    Code = 1001
 	ErrPasswordWrong   Code = 1002
 	ErrUserNotExist    Code = 1003
@@ -34,6 +35,7 @@ var codeMsg = map[Code]string{
 	ErrRecordNotFound:  "未找到记录",
 	ErrJwtSign:         "Jwt签名错误",
 	ErrJwtTokenInvalid: "无效Token",
+	ErrQiniuUpload:     "文件上传错误",
 	ErrUsernameUsed:    "用户名已存在",
 	ErrPasswordWrong:   "密码错误",
 	ErrUserNotExist:    "用户名不存在",
@@ -56,5 +58,4 @@ func (c Code) With(err error) string {
 		return c.Error() + ":" + err.Error()
 	}
 	return c.Error()
-
 }

@@ -14,7 +14,7 @@ func InitRouter() {
 	router.Use(v1.JwtToken())
 	{
 		// 用户模块的路由接口
-
+		router.POST("users", v1.CreateUser)
 		router.GET("users", v1.IndexUser)
 		router.PUT("users/:id", v1.UpdateUser)
 		router.DELETE("users/:id", v1.DeleteUser)
@@ -29,11 +29,12 @@ func InitRouter() {
 		router.GET("categories", v1.IndexCategory)
 		router.PUT("categories/:id", v1.UpdateCategory)
 		router.DELETE("categories/:id", v1.DeleteCategory)
+		// 文件上传
+		router.POST("upload", v1.Upload)
 	}
 	public := r.Group("api/v1")
 	{
 		public.POST("login", v1.Login)
-		public.POST("users", v1.CreateUser)
 	}
 	if err := r.Run(utils.HttpPort); err != nil {
 		log.Fatal(err)
