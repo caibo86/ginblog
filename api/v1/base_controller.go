@@ -5,6 +5,8 @@ import (
 	"github.com/caibo86/ginblog/utils"
 	"github.com/caibo86/ginblog/utils/errmsg"
 	"github.com/gin-gonic/gin"
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
@@ -85,12 +87,12 @@ func JwtToken() gin.HandlerFunc {
 
 // Logger 日志中间件
 func Logger() gin.HandlerFunc {
+	logger := logrus.New()
 	logFile := "log/ginblog.log"
 	file, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
 	if err != nil {
 		log.Fatalln("Open log file err:", err)
 	}
-	logger := logrus.New()
 	logger.Out = file
 	logger.SetFormatter(&logrus.TextFormatter{
 		ForceColors:               false,
@@ -109,13 +111,44 @@ func Logger() gin.HandlerFunc {
 		FieldMap:                  nil,
 		CallerPrettyfier:          nil,
 	})
+
+	logWriter, _ := rotatelogs.New(
+		"log/ginblog_%Y%m%d.log",
+		rotatelogs.WithMaxAge(7*24*time.Hour),
+		rotatelogs.WithRotationTime(24*time.Hour),
+	)
+
+	writeMap := lfshook.WriterMap{
+		logrus.InfoLevel:  logWriter,
+		logrus.FatalLevel: logWriter,
+		logrus.DebugLevel: logWriter,
+		logrus.WarnLevel:  logWriter,
+		logrus.ErrorLevel: logWriter,
+		logrus.PanicLevel: logWriter,
+	}
+	hook := lfshook.NewHook(writeMap, &logrus.TextFormatter{
+		ForceColors:               false,
+		DisableColors:             false,
+		ForceQuote:                false,
+		DisableQuote:              false,
+		EnvironmentOverrideColors: false,
+		DisableTimestamp:          false,
+		FullTimestamp:             true,
+		TimestampFormat:           "2006-01-02 15:04:05.999",
+		DisableSorting:            false,
+		SortingFunc:               nil,
+		DisableLevelTruncation:    false,
+		PadLevelText:              false,
+		QuoteEmptyFields:          false,
+		FieldMap:                  nil,
+		CallerPrettyfier:          nil,
+	})
+	logger.AddHook(hook)
+
 	return func(c *gin.Context) {
 		startTime := time.Now()
-		log.Println("aaaa")
 		c.Next()
-
 		duration := time.Since(startTime).Nanoseconds()
-		log.Println("bbbb", float64(duration)/1000000)
 		spendTime := fmt.Sprintf("%f ms", float64(duration)/1000000)
 		hostName, err := os.Hostname()
 		if err != nil {
@@ -145,8 +178,7 @@ func Logger() gin.HandlerFunc {
 		} else if statusCode >= 400 {
 			entry.Warn()
 		} else {
-			entry.Info("aaaa")
+			entry.Info()
 		}
-		logger.Infoln("aaaaaaa", "bbbbb")
 	}
 }

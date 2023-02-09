@@ -4,7 +4,6 @@ import (
 	"github.com/caibo86/ginblog/model"
 	"github.com/caibo86/ginblog/utils/errmsg"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -25,7 +24,6 @@ func CreateUser(c *gin.Context) {
 
 // IndexUser 查询用户列表
 func IndexUser(c *gin.Context) {
-	log.Println("cccc")
 	perPage, page := GetPaginate(c)
 	users, code := model.IndexUser(perPage, page)
 	RenderResult(c, code, users)
