@@ -24,13 +24,14 @@ func CheckCategory(name string) error {
 }
 
 // IndexCategory 查询分类
-func IndexCategory(perPage, page int) ([]*Category, error) {
+func IndexCategory(perPage, page int) ([]*Category, int64, error) {
 	var categories []*Category
+	var total int64
 	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&categories).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, errmsg.ErrDBSelect
+		return nil, 0, errmsg.ErrDBSelect
 	}
-	return categories, errmsg.OK
+	return categories, total, errmsg.OK
 }
 
 // CreateCategory 创建分类

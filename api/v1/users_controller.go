@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/caibo86/ginblog/model"
 	"github.com/caibo86/ginblog/utils/errmsg"
+	"github.com/caibo86/ginblog/utils/validator"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -10,23 +11,28 @@ import (
 
 // CreateUser 添加用户
 func CreateUser(c *gin.Context) {
-	var data model.User
-	if err := c.ShouldBindJSON(&data); err != nil {
+	user := &model.User{}
+	if err := c.ShouldBindJSON(user); err != nil {
 		RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.CheckUser(data.Username)
-	if code == errmsg.OK {
-		code = model.CreateUser(&data)
+	msg, err := validator.Validate(user)
+	if err != nil {
+		RenderError(c, http.StatusBadRequest, err, msg)
+		return
 	}
-	RenderResult(c, code, data)
+	code := model.CheckUser(user.Username)
+	if code == errmsg.OK {
+		code = model.CreateUser(user)
+	}
+	RenderResult(c, code, user)
 }
 
 // IndexUser 查询用户列表
 func IndexUser(c *gin.Context) {
 	perPage, page := GetPaginate(c)
-	users, code := model.IndexUser(perPage, page)
-	RenderResult(c, code, users)
+	users, total, code := model.IndexUser(perPage, page)
+	RenderResultWithTotal(c, code, users, total)
 }
 
 // UpdateUser 编辑用户

@@ -10,9 +10,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"type:varchar(20);not null" json:"username"`
-	Password string `gorm:"type:varchar(128);not null" json:"password"`
-	Role     int    `gorm:"type:int;not null" json:"role"`
+	Username string `gorm:"type:varchar(20);not null" json:"username" validate:"required,min=4,max=12" label:"用户名"`
+	Password string `gorm:"type:varchar(128);not null" json:"password" validate:"required,min=6,max=12" label:"密码"`
+	Role     int    `gorm:"type:int;not null;DEFAULT:2" json:"role" validate:"required,gte=2" label:"角色码"`
 }
 
 // CheckUser 查询用户是否存在
@@ -38,13 +38,14 @@ func CreateUser(u *User) error {
 }
 
 // IndexUser 查询用户列表
-func IndexUser(perPage, page int) ([]*User, error) {
+func IndexUser(perPage, page int) ([]*User, int64, error) {
 	var users []*User
-	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&users).Error
+	var total int64
+	err := db.Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&users).Count(&total).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, errmsg.ErrDBSelect
+		return nil, 0, errmsg.ErrDBSelect
 	}
-	return users, errmsg.OK
+	return users, total, errmsg.OK
 }
 
 // DeleteUser 删除用户
@@ -95,7 +96,7 @@ func CheckLogin(username, password string) error {
 	if ScryptPw(password) != user.Password {
 		return errmsg.ErrPasswordWrong
 	}
-	if user.Role != 0 {
+	if user.Role != 1 {
 		return errmsg.ErrNoPermission
 	}
 	return errmsg.OK

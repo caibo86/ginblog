@@ -30,8 +30,8 @@ func IndexArticle(c *gin.Context) {
 			return
 		}
 	}
-	articles, code := model.IndexArticle(perPage, page, categoryID)
-	RenderResult(c, code, articles)
+	articles, total, code := model.IndexArticle(perPage, page, categoryID)
+	RenderResultWithTotal(c, code, articles, total)
 }
 
 // ShowArticle 查询单个文章

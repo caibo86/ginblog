@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/caibo86/ginblog/utils"
 	"github.com/caibo86/ginblog/utils/errmsg"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -31,7 +31,23 @@ func RenderResult(c *gin.Context, code error, data interface{}) {
 	}
 }
 
-func RenderError(c *gin.Context, status int, err error) {
+func RenderResultWithTotal(c *gin.Context, code error, data interface{}, total int64) {
+	if code != errmsg.OK {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  code,
+			"message": code.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  code,
+			"message": code.Error(),
+			"data":    data,
+			"total":   total,
+		})
+	}
+}
+
+func RenderError(c *gin.Context, status int, err error, msg ...string) {
 	var code errmsg.Code
 	switch status {
 	case http.StatusBadRequest:
@@ -40,6 +56,12 @@ func RenderError(c *gin.Context, status int, err error) {
 		code = errmsg.ErrUnauthorized
 	default:
 		code = errmsg.ErrServer
+	}
+	message := code.With(err)
+	if len(msg) > 0 {
+		for _, m := range msg {
+			message += ":" + m
+		}
 	}
 	c.JSON(status, gin.H{
 		"status":  code,
@@ -88,12 +110,13 @@ func JwtToken() gin.HandlerFunc {
 // Logger 日志中间件
 func Logger() gin.HandlerFunc {
 	logger := logrus.New()
-	logFile := "log/ginblog.log"
-	file, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
-	if err != nil {
-		log.Fatalln("Open log file err:", err)
-	}
-	logger.Out = file
+	linkName := "log/latest_log.log"
+	//logFile := "log/ginblog.log"
+	//file, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
+	//if err != nil {
+	//	log.Fatalln("Open log file err:", err)
+	//}
+	//logger.Out = file
 	logger.SetFormatter(&logrus.TextFormatter{
 		ForceColors:               false,
 		DisableColors:             false,
@@ -116,6 +139,7 @@ func Logger() gin.HandlerFunc {
 		"log/ginblog_%Y%m%d.log",
 		rotatelogs.WithMaxAge(7*24*time.Hour),
 		rotatelogs.WithRotationTime(24*time.Hour),
+		rotatelogs.WithLinkName(linkName),
 	)
 
 	writeMap := lfshook.WriterMap{
@@ -180,5 +204,19 @@ func Logger() gin.HandlerFunc {
 		} else {
 			entry.Info()
 		}
+	}
+}
+
+func Cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cors.New(cors.Config{
+			//AllowAllOrigins: true,
+			AllowOrigins:  []string{"*"},
+			AllowMethods:  []string{"*"},
+			AllowHeaders:  []string{"Origin"},
+			ExposeHeaders: []string{"Content-Length", "Authorization"},
+			//AllowCredentials: true,
+			MaxAge: 12 * time.Hour,
+		})
 	}
 }

@@ -25,18 +25,19 @@ func CreateArticle(a *Article) error {
 }
 
 // IndexArticle 查询文章
-func IndexArticle(perPage, page int, categoryID int) ([]*Article, error) {
+func IndexArticle(perPage, page int, categoryID int) ([]*Article, int64, error) {
 	var articles []*Article
+	var total int64
 	var err error
 	if categoryID > 0 {
-		err = db.Preload("Category").Limit(perPage).Offset(OffsetByPage(perPage, page)).Where("category_id = ?", categoryID).Find(&articles).Error
+		err = db.Preload("Category").Limit(perPage).Offset(OffsetByPage(perPage, page)).Where("category_id = ?", categoryID).Find(&articles).Count(&total).Error
 	} else {
 		err = db.Preload("Category").Limit(perPage).Offset(OffsetByPage(perPage, page)).Find(&articles).Error
 	}
 	if err != nil {
-		return nil, errmsg.ErrDBSelect
+		return nil, 0, errmsg.ErrDBSelect
 	}
-	return articles, errmsg.OK
+	return articles, total, errmsg.OK
 }
 
 // ShowArticle 查询单个文章

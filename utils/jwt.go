@@ -18,7 +18,7 @@ func SetToken(username string) (string, error) {
 	claims := MyClaims{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(720 * time.Hour)),
 			Issuer:    "ginblog",
 		},
 	}
