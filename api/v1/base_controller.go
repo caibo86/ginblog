@@ -65,7 +65,7 @@ func RenderError(c *gin.Context, status int, err error, msg ...string) {
 	}
 	c.JSON(status, gin.H{
 		"status":  code,
-		"message": code.With(err),
+		"message": message,
 	})
 }
 

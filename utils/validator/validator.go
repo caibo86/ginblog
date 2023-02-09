@@ -1,19 +1,21 @@
 package validator
 
 import (
-	"github.com/go-playground/locales/pt"
+	"fmt"
+	"github.com/go-playground/locales/zh_Hans_CN"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	ptTans "github.com/go-playground/validator/v10/translations/pt"
+	"github.com/go-playground/validator/v10/translations/zh"
 	"log"
 	"reflect"
 )
 
 func Validate(data interface{}) (string, error) {
 	validate := validator.New()
-	uni := ut.New(pt.New())
-	trans, _ := uni.GetTranslator("pt")
-	err := ptTans.RegisterDefaultTranslations(validate, trans)
+	zhHansCN := zh_Hans_CN.New()
+	uni := ut.New(zhHansCN, zhHansCN)
+	trans, _ := uni.GetTranslator("zh_Hans_CN")
+	err := zh.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
 		return "", err
 	}
@@ -24,7 +26,10 @@ func Validate(data interface{}) (string, error) {
 	err = validate.Struct(data)
 	if err != nil {
 		log.Println("aaa", err)
+		errs := err.(validator.ValidationErrors)
+		fmt.Println(errs.Translate(trans))
 		for _, v := range err.(validator.ValidationErrors) {
+			fmt.Println(v.Translate(trans))
 			return v.Translate(trans), v
 		}
 	}
