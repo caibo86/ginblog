@@ -6,7 +6,7 @@ import (
 )
 
 type Article struct {
-	Category Category
+	Category Category //`json:"-"`
 	gorm.Model
 	Title      string `gorm:"type:varchar(100);not null" json:"title"`
 	CategoryID int    `gorm:"type:int;not null" json:"category_id"`
@@ -17,7 +17,11 @@ type Article struct {
 
 // CreateArticle 创建文章
 func CreateArticle(a *Article) error {
-	return db.Create(a).Error
+	err := db.Create(a).Error
+	if err == nil {
+		db.Find(&a.Category, "id = ?", a.CategoryID)
+	}
+	return err
 }
 
 // IndexArticle 查询文章
@@ -49,7 +53,11 @@ func ShowArticle(id int) (*Article, error) {
 // UpdateArticle 更新文章
 func UpdateArticle(id int, a *Article) error {
 	a.ID = uint(id)
-	return db.Model(a).Select("title", "category_id", "desc", "content", "image").Updates(a).Error
+	err := db.Model(a).Select("title", "category_id", "desc", "content", "image").Updates(a).Error
+	if err == nil {
+		db.Find(&a.Category, "id = ?", a.CategoryID)
+	}
+	return err
 }
 
 // DeleteArticle 删除文章
