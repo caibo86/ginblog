@@ -43,7 +43,7 @@ func JwtToken() gin.HandlerFunc {
 
 // Logger 日志中间件
 func Logger() gin.HandlerFunc {
-	logger := logrus.New()
+	wlog := logrus.New()
 	linkName := "log/latest_log.log"
 	//logFile := "log/ginblog.log"
 	//file, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
@@ -51,7 +51,7 @@ func Logger() gin.HandlerFunc {
 	//	log.Fatalln("Open log file err:", err)
 	//}
 	//logger.Out = file
-	logger.SetFormatter(&logrus.TextFormatter{
+	wlog.SetFormatter(&logrus.TextFormatter{
 		ForceColors:               false,
 		DisableColors:             false,
 		ForceQuote:                false,
@@ -101,7 +101,7 @@ func Logger() gin.HandlerFunc {
 		FieldMap:                  nil,
 		CallerPrettyfier:          nil,
 	})
-	logger.AddHook(hook)
+	wlog.AddHook(hook)
 
 	return func(c *gin.Context) {
 		startTime := time.Now()
@@ -118,7 +118,7 @@ func Logger() gin.HandlerFunc {
 		dataSize := c.Writer.Size()
 		method := c.Request.Method
 		path := c.Request.RequestURI
-		entry := logger.WithFields(logrus.Fields{
+		entry := wlog.WithFields(logrus.Fields{
 			"Hostname":  hostName,
 			"Status":    statusCode,
 			"SpendTime": spendTime,

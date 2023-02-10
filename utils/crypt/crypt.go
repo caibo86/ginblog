@@ -12,7 +12,6 @@ func Scrypt(s string) string {
 	salt := []byte{6, 10, 11, 16, 23, 25, 13, 66}
 	hash, err := scrypt.Key([]byte(s), salt, 1<<15, 8, 1, KeyLen)
 	if err != nil {
-		// TODO logrus
 		log.Fatal(err)
 	}
 	ret := base64.StdEncoding.EncodeToString(hash)
