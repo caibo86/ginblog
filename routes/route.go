@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/caibo86/ginblog/api/middleware"
 	v1 "github.com/caibo86/ginblog/api/v1"
 	"github.com/caibo86/ginblog/utils"
 	"github.com/gin-gonic/gin"
@@ -11,10 +12,10 @@ func InitRouter() {
 	gin.SetMode(utils.AppMode)
 	r := gin.New()
 	//r.Use(gin.Logger())
-	r.Use(v1.Logger())
+	r.Use(middleware.Logger())
 	r.Use(gin.Recovery())
 	router := r.Group("api/v1")
-	router.Use(v1.JwtToken())
+	router.Use(middleware.JwtToken())
 	{
 		// 用户模块的路由接口
 		router.POST("users", v1.CreateUser)

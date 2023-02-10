@@ -25,9 +25,9 @@ func SetToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString(JwtKeyBytes)
 	if err != nil {
-		return "", errmsg.ErrJwtSign
+		return "", err
 	}
-	return ss, errmsg.OK
+	return ss, nil
 }
 
 // CheckToken 验证token
@@ -36,7 +36,7 @@ func CheckToken(tokenString string) (*MyClaims, error) {
 		return JwtKeyBytes, nil
 	})
 	if claims, ok := token.Claims.(*MyClaims); ok && token.Valid {
-		return claims, errmsg.OK
+		return claims, nil
 	}
 	return nil, errmsg.ErrJwtTokenInvalid
 }

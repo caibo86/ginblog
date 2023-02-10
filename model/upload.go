@@ -5,7 +5,6 @@ import (
 	"github.com/caibo86/ginblog/utils"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
-	"log"
 	"mime/multipart"
 )
 
@@ -30,7 +29,6 @@ func UploadFile(file multipart.File, fileSize int64) (string, error) {
 	ret := &storage.PutRet{}
 	err := formUploader.PutWithoutKey(context.Background(), ret, upToken, file, fileSize, putExtra)
 	if err != nil {
-		log.Println(err)
 		return "", err
 	}
 	url := QiniuServer + ret.Key

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/caibo86/ginblog/api/base"
 	"github.com/caibo86/ginblog/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,19 +11,34 @@ import (
 // CreateCategory 创建分类
 func CreateCategory(c *gin.Context) {
 	category := &model.Category{}
-	if err := c.ShouldBindJSON(category); err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+	err := c.ShouldBindJSON(category)
+	if err != nil {
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.CreateCategory(category)
-	RenderResult(c, code, category)
+	//exist, err := model.CheckCategoryExist(category.Name)
+	//if err != nil {
+	//	base.RenderError(c, http.StatusInternalServerError, err)
+	//	return
+	//}
+	//if exist {
+	//	base.RenderResult(c, errmsg.ErrNameUsed, nil)
+	//	return
+	//}
+	err = model.CreateCategory(category)
+	base.RenderResult(c, err, gin.H{
+		"category": category,
+	})
 }
 
 // IndexCategory 查询分类
 func IndexCategory(c *gin.Context) {
-	perPage, page := GetPaginate(c)
-	categories, total, code := model.IndexCategory(perPage, page)
-	RenderResultWithTotal(c, code, categories, total)
+	perPage, page := base.GetPaginate(c)
+	categories, total, err := model.IndexCategory(perPage, page)
+	base.RenderResult(c, err, gin.H{
+		"categories": categories,
+		"total":      total,
+	})
 }
 
 // UpdateCategory 更新分类
@@ -30,24 +46,35 @@ func UpdateCategory(c *gin.Context) {
 	category := &model.Category{}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
 	if err = c.ShouldBindJSON(category); err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.UpdateCategory(id, category)
-	RenderResult(c, code, category)
+	//exist, err := model.CheckCategoryExist(category.Name)
+	//if err != nil {
+	//	base.RenderError(c, http.StatusInternalServerError, err)
+	//	return
+	//}
+	//if exist {
+	//	base.RenderResult(c, errmsg.ErrNameUsed, nil)
+	//	return
+	//}
+	err = model.UpdateCategory(id, category)
+	base.RenderResult(c, err, gin.H{
+		"category": category,
+	})
 }
 
 // DeleteCategory 删除分类
 func DeleteCategory(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.DeleteCategory(id)
-	RenderResult(c, code, nil)
+	err = model.DeleteCategory(id)
+	base.RenderResult(c, err, nil)
 }

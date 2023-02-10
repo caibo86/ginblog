@@ -1,8 +1,8 @@
 package v1
 
 import (
+	"github.com/caibo86/ginblog/api/base"
 	"github.com/caibo86/ginblog/model"
-	"github.com/caibo86/ginblog/utils/errmsg"
 	"github.com/caibo86/ginblog/utils/validator"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -13,54 +13,74 @@ import (
 func CreateUser(c *gin.Context) {
 	user := &model.User{}
 	if err := c.ShouldBindJSON(user); err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	msg, err := validator.Validate(user)
+	err := validator.Validate(user)
 	if err != nil {
-		RenderError(c, http.StatusBadRequest, err, msg)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.CheckUser(user.Username)
-	if code == errmsg.OK {
-		code = model.CreateUser(user)
-	}
-	RenderResult(c, code, user)
+	// 利用DB唯一键 暂时不用这段代码
+	//exist, err := model.CheckUserExist(user.Username)
+	//if err != nil {
+	//	base.RenderError(c, http.StatusInternalServerError, err)
+	//	return
+	//}
+	//if exist {
+	//	base.RenderResult(c, errmsg.ErrNameUsed, nil)
+	//	return
+	//}
+	err = model.CreateUser(user)
+	base.RenderResult(c, err, gin.H{
+		"user": user,
+	})
 }
 
 // IndexUser 查询用户列表
 func IndexUser(c *gin.Context) {
-	perPage, page := GetPaginate(c)
-	users, total, code := model.IndexUser(perPage, page)
-	RenderResultWithTotal(c, code, users, total)
+	perPage, page := base.GetPaginate(c)
+	users, total, err := model.IndexUser(perPage, page)
+	base.RenderResult(c, err, gin.H{
+		"users": users,
+		"total": total,
+	})
 }
 
 // UpdateUser 编辑用户
 func UpdateUser(c *gin.Context) {
-	u := &model.User{}
+	user := &model.User{}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	if err = c.ShouldBindJSON(u); err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+	if err = c.ShouldBindJSON(user); err != nil {
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.CheckUser(u.Username)
-	if code == errmsg.OK {
-		code = model.UpdateUser(id, u)
-	}
-	RenderResult(c, code, u)
+	//exist, err := model.CheckUserExist(user.Username)
+	//if err != nil {
+	//	base.RenderError(c, http.StatusInternalServerError, err)
+	//	return
+	//}
+	//if exist {
+	//	base.RenderResult(c, errmsg.ErrNameUsed, nil)
+	//	return
+	//}
+	err = model.UpdateUser(id, user)
+	base.RenderResult(c, err, gin.H{
+		"user": user,
+	})
 }
 
 // DeleteUser 删除用户
 func DeleteUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		RenderError(c, http.StatusBadRequest, err)
+		base.RenderError(c, http.StatusBadRequest, err)
 		return
 	}
-	code := model.DeleteUser(id)
-	RenderResult(c, code, nil)
+	err = model.DeleteUser(id)
+	base.RenderResult(c, err, nil)
 }
