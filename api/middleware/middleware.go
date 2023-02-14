@@ -142,15 +142,13 @@ func Logger() gin.HandlerFunc {
 }
 
 func Cors() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		cors.New(cors.Config{
-			//AllowAllOrigins: true,
-			AllowOrigins:  []string{"*"},
-			AllowMethods:  []string{"*"},
-			AllowHeaders:  []string{"Origin"},
-			ExposeHeaders: []string{"Content-Length", "Authorization"},
-			//AllowCredentials: true,
-			MaxAge: 12 * time.Hour,
-		})
-	}
+	return cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"Content-Length", "Authorization", "Content-Type"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	})
+
 }

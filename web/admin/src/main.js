@@ -10,6 +10,12 @@ Vue.config.productionTip = false
 
 Vue.use(Antd)
 
+Vue.prototype.$message.config({
+    top: '60px',
+    duration: 2,
+    maxCount: 3
+})
+
 axios.defaults.baseURL = 'http://localhost:3000/api/v1'
 Vue.prototype.$http = axios
 

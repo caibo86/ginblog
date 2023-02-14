@@ -12,6 +12,7 @@ func InitRouter() {
 	gin.SetMode(utils.AppMode)
 	r := gin.New()
 	//r.Use(gin.Logger())
+	r.Use(middleware.Cors())
 	r.Use(middleware.Logger())
 	r.Use(gin.Recovery())
 	router := r.Group("api/v1")
