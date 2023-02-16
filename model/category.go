@@ -24,10 +24,10 @@ func CheckCategoryExist(name string) (bool, error) {
 }
 
 // IndexCategory 查询分类
-func IndexCategory(perPage, page int) ([]*Category, int64, error) {
+func IndexCategory(pageSize, page int) ([]*Category, int64, error) {
 	var categories []*Category
 	var total int64
-	err := db.Model(&Category{}).Count(&total).Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&categories).Error
+	err := db.Model(&Category{}).Count(&total).Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&categories).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err
 	}

@@ -33,8 +33,8 @@ func CreateCategory(c *gin.Context) {
 
 // IndexCategory 查询分类
 func IndexCategory(c *gin.Context) {
-	perPage, page := base.GetPaginate(c)
-	categories, total, err := model.IndexCategory(perPage, page)
+	pageSize, page := base.GetPaginate(c)
+	categories, total, err := model.IndexCategory(pageSize, page)
 	base.RenderResult(c, err, gin.H{
 		"categories": categories,
 		"total":      total,

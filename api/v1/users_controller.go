@@ -37,10 +37,24 @@ func CreateUser(c *gin.Context) {
 	})
 }
 
+// ShowUser 查询单个用户
+func ShowUser(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		base.RenderError(c, http.StatusBadRequest, err)
+		return
+	}
+	user, err := model.ShowUser(id)
+	base.RenderResult(c, err, gin.H{
+		"user": user,
+	})
+}
+
 // IndexUser 查询用户列表
 func IndexUser(c *gin.Context) {
-	perPage, page := base.GetPaginate(c)
-	users, total, err := model.IndexUser(perPage, page)
+	pageSize, page := base.GetPaginate(c)
+	username := c.Query("username")
+	users, total, err := model.IndexUser(pageSize, page, username)
 	base.RenderResult(c, err, gin.H{
 		"users": users,
 		"total": total,

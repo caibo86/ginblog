@@ -25,7 +25,7 @@ func CreateArticle(c *gin.Context) {
 func IndexArticle(c *gin.Context) {
 	var categoryID int
 	var err error
-	perPage, page := base.GetPaginate(c)
+	pageSize, page := base.GetPaginate(c)
 	if c.Query("category_id") != "" {
 		categoryID, err = strconv.Atoi(c.Query("category_id"))
 		if err != nil {
@@ -33,7 +33,7 @@ func IndexArticle(c *gin.Context) {
 			return
 		}
 	}
-	articles, total, err := model.IndexArticle(perPage, page, categoryID)
+	articles, total, err := model.IndexArticle(pageSize, page, categoryID)
 	base.RenderResult(c, err, gin.H{
 		"articles": articles,
 		"total":    total,

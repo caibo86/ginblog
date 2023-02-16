@@ -20,7 +20,8 @@ func InitRouter() {
 	{
 		// 用户模块的路由接口
 		router.POST("users", v1.CreateUser)
-		//router.GET("users", v1.IndexUser)
+		router.GET("users", v1.IndexUser)
+		router.GET("users/:id", v1.ShowUser)
 		router.PUT("users/:id", v1.UpdateUser)
 		router.DELETE("users/:id", v1.DeleteUser)
 		// 文章模块的路由接口
@@ -40,7 +41,6 @@ func InitRouter() {
 	public := r.Group("api/v1")
 	{
 		// 用户模块的路由接口
-		public.GET("users", v1.IndexUser)
 
 		public.POST("login", v1.Login)
 	}

@@ -6,18 +6,18 @@ import (
 )
 
 // OffsetByPage 根据页计算偏移
-func OffsetByPage(perPage, page int) int {
-	return (page - 1) * perPage
+func OffsetByPage(pageSize, page int) int {
+	return (page - 1) * pageSize
 }
 
 func GetPaginate(c *gin.Context) (int, int) {
-	perPage, _ := strconv.Atoi(c.Query("perPage"))
+	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
 	page, _ := strconv.Atoi(c.Query("page"))
-	if perPage < 1 {
-		perPage = 20
+	if pageSize < 1 {
+		pageSize = 20
 	}
 	if page < 1 {
 		page = 1
 	}
-	return perPage, page
+	return pageSize, page
 }

@@ -114,7 +114,7 @@ func Logger() gin.HandlerFunc {
 		}
 		statusCode := c.Writer.Status()
 		clientIP := c.ClientIP()
-		userAgent := c.Request.UserAgent()
+		//userAgent := c.Request.UserAgent()
 		dataSize := c.Writer.Size()
 		method := c.Request.Method
 		path := c.Request.RequestURI
@@ -125,8 +125,8 @@ func Logger() gin.HandlerFunc {
 			"IP":        clientIP,
 			"Method":    method,
 			"Path":      path,
-			"Agent":     userAgent,
-			"DataSize":  dataSize,
+			//"Agent":     userAgent,
+			"DataSize": dataSize,
 		})
 		if len(c.Errors) > 0 {
 			entry.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
