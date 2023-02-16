@@ -11,7 +11,7 @@ func OffsetByPage(perPage, page int) int {
 }
 
 func GetPaginate(c *gin.Context) (int, int) {
-	perPage, _ := strconv.Atoi(c.Query("per_page"))
+	perPage, _ := strconv.Atoi(c.Query("perPage"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	if perPage < 1 {
 		perPage = 20

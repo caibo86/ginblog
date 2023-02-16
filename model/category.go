@@ -27,7 +27,7 @@ func CheckCategoryExist(name string) (bool, error) {
 func IndexCategory(perPage, page int) ([]*Category, int64, error) {
 	var categories []*Category
 	var total int64
-	err := db.Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&categories).Count(&total).Error
+	err := db.Model(&Category{}).Count(&total).Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&categories).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err
 	}

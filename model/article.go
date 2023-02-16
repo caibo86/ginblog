@@ -30,9 +30,9 @@ func IndexArticle(perPage, page int, categoryID int) ([]*Article, int64, error) 
 	var total int64
 	var err error
 	if categoryID > 0 {
-		err = db.Preload("Category").Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Where("category_id = ?", categoryID).Find(&articles).Count(&total).Error
+		err = db.Model(&Article{}).Where("category_id = ?", categoryID).Count(&total).Preload("Category").Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&articles).Error
 	} else {
-		err = db.Preload("Category").Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&articles).Count(&total).Error
+		err = db.Model(&Article{}).Count(&total).Preload("Category").Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&articles).Error
 	}
 	if err != nil {
 		return nil, 0, err

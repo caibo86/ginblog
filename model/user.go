@@ -4,6 +4,8 @@ import (
 	"github.com/caibo86/ginblog/api/base"
 	"github.com/caibo86/ginblog/utils/crypt"
 	"github.com/caibo86/ginblog/utils/errmsg"
+	slog "github.com/caibo86/ginblog/utils/logger"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -36,7 +38,14 @@ func CreateUser(u *User) error {
 func IndexUser(perPage, page int) ([]*User, int64, error) {
 	var users []*User
 	var total int64
-	err := db.Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&users).Count(&total).Error
+	err := db.Model(&User{}).Count(&total).Limit(perPage).Offset(base.OffsetByPage(perPage, page)).Find(&users).Error
+	slog.Default().WithFields(logrus.Fields{
+		"total":   total,
+		"page":    page,
+		"perPage": perPage,
+		"users":   users,
+		"x":       base.OffsetByPage(perPage, page),
+	}).Error()
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err
 	}
