@@ -39,7 +39,6 @@ func ShowUser(id int) (*User, error) {
 	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
 	}
-
 	return user, nil
 }
 

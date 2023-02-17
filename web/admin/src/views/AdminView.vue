@@ -1,16 +1,16 @@
 <template>
-<a-layout class="container">
-    <Nav></Nav>
-    <a-layout>
-        <a-layout-header class="headerBtn">
-            <Header></Header>
-        </a-layout-header>
-        <a-layout-content><router-view></router-view></a-layout-content>
-        <a-layout-footer>
-            <Footer></Footer>
-        </a-layout-footer>
+    <a-layout class="container">
+        <Nav></Nav>
+        <a-layout>
+            <a-layout-header class="headerBtn">
+                <Header></Header>
+            </a-layout-header>
+            <a-layout-content><router-view :key="$route.path"></router-view></a-layout-content>
+            <a-layout-footer>
+                <Footer></Footer>
+            </a-layout-footer>
+        </a-layout>
     </a-layout>
-</a-layout>
 </template>
 
 <script>
@@ -23,7 +23,6 @@ export default {
         Footer,
         Header
     }
-
 }
 </script>
 

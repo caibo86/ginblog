@@ -33,6 +33,7 @@ func InitRouter() {
 		// 分类模块的路由接口
 		router.POST("categories", v1.CreateCategory)
 		router.GET("categories", v1.IndexCategory)
+		router.GET("categories/:id", v1.ShowCategory)
 		router.PUT("categories/:id", v1.UpdateCategory)
 		router.DELETE("categories/:id", v1.DeleteCategory)
 		// 文件上传

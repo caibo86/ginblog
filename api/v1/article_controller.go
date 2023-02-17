@@ -33,7 +33,8 @@ func IndexArticle(c *gin.Context) {
 			return
 		}
 	}
-	articles, total, err := model.IndexArticle(pageSize, page, categoryID)
+	title := c.Query("title")
+	articles, total, err := model.IndexArticle(pageSize, page, categoryID, title)
 	base.RenderResult(c, err, gin.H{
 		"articles": articles,
 		"total":    total,

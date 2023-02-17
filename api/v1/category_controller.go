@@ -41,6 +41,19 @@ func IndexCategory(c *gin.Context) {
 	})
 }
 
+// ShowCategory 获取单个分类信息
+func ShowCategory(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		base.RenderError(c, http.StatusBadRequest, err)
+		return
+	}
+	category, err := model.ShowCategory(id)
+	base.RenderResult(c, err, gin.H{
+		"category": category,
+	})
+}
+
 // UpdateCategory 更新分类
 func UpdateCategory(c *gin.Context) {
 	category := &model.Category{}

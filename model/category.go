@@ -6,7 +6,7 @@ import (
 )
 
 type Category struct {
-	ID   int    `gorm:"primary_key;auto_increment" json:"id"`
+	ID   int    `gorm:"primary_key;auto_increment" json:"ID"`
 	Name string `gorm:"type:varchar(128);unique;not null" json:"name"`
 }
 
@@ -32,6 +32,16 @@ func IndexCategory(pageSize, page int) ([]*Category, int64, error) {
 		return nil, 0, err
 	}
 	return categories, total, nil
+}
+
+// ShowCategory 获取单个分类信息
+func ShowCategory(id int) (*Category, error) {
+	category := &Category{}
+	err := db.Where("id = ?", id).First(category).Error
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
 }
 
 // CreateCategory 创建分类

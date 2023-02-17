@@ -2,8 +2,8 @@
     <div>
         <h3>用户列表页面</h3>
         <a-card>
-            <a-row :gutter="20">
-                <a-col :span="6">
+            <a-row :gutter="20" style="margin-bottom: 10px">
+                <a-col :span="8">
                     <a-input-search
                         v-model="queryParam.username"
                         placeholder="输入用户名查找"
@@ -14,45 +14,28 @@
                 </a-col>
 
                 <a-col :span="4">
-                    <a-button type="primary" @click="addUserVisible = true"
-                        >新增</a-button
-                    >
+                    <a-button type="primary" @click="addUserVisible = true">新增</a-button>
                 </a-col>
             </a-row>
 
             <a-table
-                rowKey="username"
+                rowKey="ID"
                 :columns="columns"
                 :pagination="pagination"
                 :dataSource="userlist"
                 bordered
                 @change="handleTableChange"
             >
-                <span slot="role" slot-scope="role">{{
-                    role == 1 ? '管理员' : '订阅者'
-                }}</span>
+                <span slot="role" slot-scope="role">{{ role == 1 ? '管理员' : '订阅者' }}</span>
                 <template slot="action" slot-scope="id">
                     <div class="actionSlot">
-                        <a-button
-                            type="primary"
-                            icon="edit"
-                            style="margin-right: 15px"
-                            @click="editUser(id)"
+                        <a-button type="primary" icon="edit" style="margin-right: 15px" @click="editUser(id)"
                             >编辑</a-button
                         >
-                        <a-button
-                            style="margin-right: 15px"
-                            icon="delete"
-                            type="danger"
-                            @click="deleteUser(id)"
+                        <a-button style="margin-right: 15px" icon="delete" type="danger" @click="deleteUser(id)"
                             >删除</a-button
                         >
-                        <a-button
-                            icon="info"
-                            type="info"
-                            @click="deleteUser(id)"
-                            >重置密码</a-button
-                        >
+                        <a-button icon="info" type="info" @click="deleteUser(id)">重置密码</a-button>
                     </div>
                 </template>
             </a-table>
@@ -67,27 +50,15 @@
             @cancel="addUserCancel"
             :destroyOnClose="true"
         >
-            <a-form-model
-                :model="newUser"
-                :rules="addUserRules"
-                ref="addUserRef"
-            >
+            <a-form-model :model="newUser" :rules="addUserRules" ref="addUserRef">
                 <a-form-model-item has-feedback label="用户名" prop="username">
                     <a-input v-model="newUser.username"></a-input>
                 </a-form-model-item>
                 <a-form-model-item has-feedback label="密码" prop="password">
-                    <a-input-password
-                        v-model="newUser.password"
-                    ></a-input-password>
+                    <a-input-password v-model="newUser.password"></a-input-password>
                 </a-form-model-item>
-                <a-form-model-item
-                    has-feedback
-                    label="确认密码"
-                    prop="checkpass"
-                >
-                    <a-input-password
-                        v-model="newUser.checkpass"
-                    ></a-input-password
+                <a-form-model-item has-feedback label="确认密码" prop="checkpass">
+                    <a-input-password v-model="newUser.checkpass"></a-input-password
                 ></a-form-model-item>
             </a-form-model>
         </a-modal>
@@ -100,11 +71,7 @@
             @ok="editUserOk"
             @cancel="editUserCancel"
         >
-            <a-form-model
-                :model="userInfo"
-                :rules="userRules"
-                ref="editUserRef"
-            >
+            <a-form-model :model="userInfo" :rules="userRules" ref="editUserRef">
                 <a-form-model-item has-feedback label="用户名" prop="username">
                     <a-input v-model="userInfo.username"></a-input>
                 </a-form-model-item>
@@ -192,7 +159,6 @@ export default {
                 password: '',
                 role: 2
             },
-            visible: false,
             addUserVisible: false,
             editUserVisible: false,
             userRules: {
@@ -202,11 +168,8 @@ export default {
                             if (this.userInfo.username === '') {
                                 callback(new Error('请输入用户名'))
                             }
-                            if (
-                                [...this.userInfo.username].length < 4 ||
-                                [...this.userInfo.username].length > 12
-                            ) {
-                                callback(new Error('用户应当在4到12位之间'))
+                            if ([...this.userInfo.username].length < 4 || [...this.userInfo.username].length > 12) {
+                                callback(new Error('用户名应当在4到12位之间'))
                             } else {
                                 callback()
                             }
@@ -220,10 +183,7 @@ export default {
                             if (this.userInfo.password === '') {
                                 callback(new Error('请输入密码'))
                             }
-                            if (
-                                [...this.userInfo.password].length < 6 ||
-                                [...this.userInfo.password].length > 20
-                            ) {
+                            if ([...this.userInfo.password].length < 6 || [...this.userInfo.password].length > 20) {
                                 callback(new Error('密码应当在6到20位之间'))
                             } else {
                                 callback()
@@ -238,10 +198,7 @@ export default {
                             if (this.userInfo.checkpass === '') {
                                 callback(new Error('请输入密码'))
                             }
-                            if (
-                                this.userInfo.checkpass !==
-                                this.userInfo.password
-                            ) {
+                            if (this.userInfo.checkpass !== this.userInfo.password) {
                                 callback(new Error('密码不一致,请重新输入'))
                             } else {
                                 callback()
@@ -258,11 +215,8 @@ export default {
                             if (this.newUser.username === '') {
                                 callback(new Error('请输入用户名'))
                             }
-                            if (
-                                [...this.newUser.username].length < 4 ||
-                                [...this.newUser.username].length > 12
-                            ) {
-                                callback(new Error('用户应当在4到12位之间'))
+                            if ([...this.newUser.username].length < 4 || [...this.newUser.username].length > 12) {
+                                callback(new Error('用户名应当在4到12位之间'))
                             } else {
                                 callback()
                             }
@@ -276,10 +230,7 @@ export default {
                             if (this.newUser.password === '') {
                                 callback(new Error('请输入密码'))
                             }
-                            if (
-                                [...this.newUser.password].length < 6 ||
-                                [...this.newUser.password].length > 20
-                            ) {
+                            if ([...this.newUser.password].length < 6 || [...this.newUser.password].length > 20) {
                                 callback(new Error('密码应当在6到20位之间'))
                             } else {
                                 callback()
@@ -294,9 +245,7 @@ export default {
                             if (this.newUser.checkpass === '') {
                                 callback(new Error('请输入密码'))
                             }
-                            if (
-                                this.newUser.checkpass !== this.newUser.password
-                            ) {
+                            if (this.newUser.checkpass !== this.newUser.password) {
                                 callback(new Error('密码不一致,请重新输入'))
                             } else {
                                 callback()
@@ -334,6 +283,14 @@ export default {
             if (res.status !== 0) return this.$message.error(res.message)
             this.userlist = res.data.users
             this.pagination.total = res.data.total
+            if (
+                this.pagination.current > 1 &&
+                (this.pagination.current - 1) * this.pagination.pageSize >= this.pagination.total
+            ) {
+                this.pagination.current -= 1
+                this.queryParam.page = this.pagination.current
+                await this.indexUser()
+            }
         },
         // 更改分页
         handleTableChange(pagination, filters, sorter) {
@@ -381,9 +338,9 @@ export default {
                 if (res.status !== 0) {
                     this.$message.error(res.message)
                 } else {
-                    this.$message.success('添加用户成功')
-                    this.indexUser()
                     this.addUserVisible = false
+                    this.$message.success('添加用户成功')
+                    await this.indexUser()
                 }
             })
         },
@@ -412,13 +369,10 @@ export default {
                     return this.$message.error('参数不符合要求,请重新输入')
                 }
 
-                const { data: res } = await this.$http.put(
-                    `users/${this.userInfo.ID}`,
-                    {
-                        username: this.userInfo.username,
-                        role: this.userInfo.role
-                    }
-                )
+                const { data: res } = await this.$http.put(`users/${this.userInfo.ID}`, {
+                    username: this.userInfo.username,
+                    role: this.userInfo.role
+                })
                 if (res.status !== 0) {
                     this.$message.error(res.message)
                 } else {

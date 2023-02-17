@@ -6,13 +6,13 @@ import (
 )
 
 type Article struct {
-	Category Category //`json:"-"`
 	gorm.Model
-	Title      string `gorm:"type:varchar(100);not null" json:"title"`
-	CategoryID int    `gorm:"type:int;not null" json:"category_id"`
-	Desc       string `gorm:"type:varchar(200)" json:"desc"`
-	Content    string `gorm:"type:longtext" json:"content"`
-	Image      string `gorm:"type:varchar(100)" json:"image"`
+	Title      string   `gorm:"type:varchar(100);not null" json:"title"`
+	Desc       string   `gorm:"type:varchar(200)" json:"desc"`
+	Content    string   `gorm:"type:longtext" json:"content"`
+	Image      string   `gorm:"type:varchar(100)" json:"image"`
+	CategoryID int      `gorm:"type:int;not null" json:"category_id"`
+	Category   Category `gorm:"foreignKey:CategoryID"`
 }
 
 // CreateArticle 创建文章
@@ -25,14 +25,28 @@ func CreateArticle(a *Article) error {
 }
 
 // IndexArticle 查询文章
-func IndexArticle(pageSize, page int, categoryID int) ([]*Article, int64, error) {
+func IndexArticle(pageSize, page int, categoryID int, title string) ([]*Article, int64, error) {
 	var articles []*Article
 	var total int64
 	var err error
+
 	if categoryID > 0 {
-		err = db.Model(&Article{}).Where("category_id = ?", categoryID).Count(&total).Preload("Category").Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&articles).Error
+		if title != "" {
+			err = db.Model(&Article{}).Where("category_id = ? and title LIKE ?", categoryID, title+"%").Count(&total).
+				Preload("Category").Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&articles).Error
+		} else {
+			err = db.Model(&Article{}).Where("category_id = ?", categoryID).Count(&total).
+				Preload("Category").Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&articles).Error
+		}
 	} else {
-		err = db.Model(&Article{}).Count(&total).Preload("Category").Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&articles).Error
+		if title != "" {
+			err = db.Model(&Article{}).Where("title LIKE ?", title+"%").Count(&total).
+				Preload("Category").Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&articles).Error
+		} else {
+			err = db.Model(&Article{}).Count(&total).
+				Preload("Category").Limit(pageSize).Offset(base.OffsetByPage(pageSize, page)).Find(&articles).Error
+		}
+
 	}
 	if err != nil {
 		return nil, 0, err
