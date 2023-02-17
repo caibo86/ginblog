@@ -1,1 +1,5 @@
-./src/components/editor/*
+/src/components/editor/icons
+/src/components/editor/langs
+/src/components/editor/themes
+/src/components/editor/tinymce.min.js
+
