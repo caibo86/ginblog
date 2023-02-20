@@ -43,13 +43,14 @@ export default {
                 ],
                 // 上传图片
                 images_upload_handler: async (blobInfo, succFun, failFun) => {
-                    console.log('我在这里')
                     const formdata = new FormData()
                     formdata.append('file', blobInfo.blob(), blobInfo.name())
                     const { data: res } = await this.$http.post('upload', formdata)
                     if (res.status !== 0) return this.$message.error(res.message)
                     succFun(res.data.url)
-                }
+                },
+                imagetools_cors_hosts: ['*'],
+                imagetools_proxy: '*'
             },
             content: this.value
         }

@@ -18,7 +18,7 @@ const routes = [
         component: LoginView
     },
     {
-        path: '/admin',
+        path: '//',
         name: 'admin',
         component: AdminView,
         children: [

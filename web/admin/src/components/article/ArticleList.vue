@@ -14,7 +14,7 @@
                 </a-col>
 
                 <a-col :span="4">
-                    <a-button type="primary" @click="$router.push('/admin/addarticle')">新增</a-button>
+                    <a-button type="primary" @click="$router.push('/addarticle')">新增</a-button>
                 </a-col>
                 <a-col :span="6" offset="4">
                     <a-select placeholder="请选择分类" style="width: 200px" @change="categoryChange">
@@ -43,7 +43,7 @@
                             type="primary"
                             icon="edit"
                             style="margin-right: 15px"
-                            @click="$router.push(`/admin/addarticle/${id}`)"
+                            @click="$router.push(`/addarticle/${id}`)"
                             >编辑</a-button
                         >
                         <a-button

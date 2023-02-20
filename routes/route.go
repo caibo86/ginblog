@@ -15,6 +15,12 @@ func InitRouter() {
 	r.Use(middleware.Cors())
 	r.Use(middleware.Logger())
 	r.Use(gin.Recovery())
+	r.LoadHTMLGlob("static/admin/index.html")
+	r.Static("admin/static", "static/admin/static")
+	r.StaticFile("admin/favicon.icon", "static/admin/favicon.icon")
+	r.GET("admin", func(c *gin.Context) {
+		c.HTML(200, "index.html", nil)
+	})
 	router := r.Group("api/v1")
 	router.Use(middleware.JwtToken())
 	{
