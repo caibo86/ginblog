@@ -29,7 +29,7 @@ func InitDb() {
 	}
 
 	// AutoMigrate 数据库自动迁移
-	err = db.AutoMigrate(&User{}, &Article{}, &Category{})
+	err = db.AutoMigrate(&User{}, &Article{}, &Category{}, &Profile{})
 	if err != nil {
 		fmt.Println("数据库错误:", err)
 	}

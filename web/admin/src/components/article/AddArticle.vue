@@ -38,10 +38,10 @@
                 ></a-form-model-item>
 
                 <a-form-model-item>
-                    <a-button type="primary" style="margin-right: 15px" @click="articleOK(article.ID)">{{
+                    <a-button type="primary" style="margin-right: 15px" @click.once="articleOK(article.ID)">{{
                         article.ID ? '更新' : '提交'
                     }}</a-button>
-                    <a-button type="info" @click="articleCancel">取消</a-button>
+                    <a-button type="info" @click.once="articleCancel">取消</a-button>
                 </a-form-model-item>
             </a-form-model>
         </a-card>

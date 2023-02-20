@@ -8,6 +8,7 @@ import AddArticle from '../components/article/AddArticle.vue'
 import ArticleList from '../components/article/ArticleList.vue'
 import CategoryList from '../components/category/CategoryList.vue'
 import UserList from '../components/user/UserList.vue'
+import Profile from '../components/user/Profile.vue'
 
 Vue.use(VueRouter)
 
@@ -18,7 +19,7 @@ const routes = [
         component: LoginView
     },
     {
-        path: '//',
+        path: '/',
         name: 'admin',
         component: AdminView,
         children: [
@@ -27,7 +28,8 @@ const routes = [
             { path: 'addarticle/:id', component: AddArticle, props: true },
             { path: 'articlelist', component: ArticleList },
             { path: 'categorylist', component: CategoryList },
-            { path: 'userlist', component: UserList }
+            { path: 'userlist', component: UserList },
+            { path: 'profile', component: Profile }
         ]
     }
 ]

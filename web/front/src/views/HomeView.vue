@@ -8,7 +8,7 @@
                         <Nav></Nav>
                     </v-col>
                     <v-col>
-                        <v-sheet min-height="80vh" rounded="lg"> <router-view></router-view> </v-sheet>
+                        <v-sheet min-height="80vh" rounded="lg" max-width="60vw"> <router-view></router-view> </v-sheet>
                     </v-col> </v-row
             ></v-container>
         </v-main>

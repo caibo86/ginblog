@@ -30,6 +30,9 @@ func InitRouter() {
 		router.GET("users/:id", v1.ShowUser)
 		router.PUT("users/:id", v1.UpdateUser)
 		router.DELETE("users/:id", v1.DeleteUser)
+		// 用户配置信息的路由接口
+		router.GET("profiles/:id", v1.ShowProfile)
+		router.PUT("profiles/:id", v1.UpdateProfile)
 		// 文章模块的路由接口
 		router.POST("articles", v1.CreateArticle)
 		router.GET("articles", v1.IndexArticle)
