@@ -17,7 +17,7 @@ func InitRouter() {
 	r.Use(gin.Recovery())
 	r.LoadHTMLGlob("static/admin/index.html")
 	r.Static("admin/static", "static/admin/static")
-	r.StaticFile("admin/favicon.icon", "static/admin/favicon.icon")
+	r.StaticFile("admin/favicon.ico", "static/admin/favicon.ico")
 	r.GET("admin", func(c *gin.Context) {
 		c.HTML(200, "index.html", nil)
 	})

@@ -32,9 +32,12 @@ func SetToken(username string) (string, error) {
 
 // CheckToken 验证token
 func CheckToken(tokenString string) (*MyClaims, error) {
-	token, _ := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return JwtKeyBytes, nil
 	})
+	if err != nil {
+		return nil, err
+	}
 	if claims, ok := token.Claims.(*MyClaims); ok && token.Valid {
 		return claims, nil
 	}
